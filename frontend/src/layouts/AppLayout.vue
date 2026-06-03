@@ -37,6 +37,19 @@
                 >
                     Watchdog
                 </router-link>
+
+                <template v-if="moduleMenuItems.length">
+                    <div class="my-2 border-t border-gray-200 dark:border-gray-700" />
+                    <router-link
+                        v-for="item in moduleMenuItems"
+                        :key="item.name"
+                        :to="`/${item.path}`"
+                        class="flex items-center px-4 py-2 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                        active-class="bg-indigo-50 text-indigo-700 dark:bg-indigo-900 dark:text-indigo-300"
+                    >
+                        {{ item.meta.label }}
+                    </router-link>
+                </template>
             </nav>
         </aside>
 
@@ -106,12 +119,20 @@
 
 <script setup>
 import { computed, onMounted, onUnmounted, ref, watch } from "vue";
+import { useRouter } from "vue-router";
 import { useAuth } from "@/composables/useAuth";
 import { useNotifications } from "@/composables/useNotifications";
 import NotificationBell from "@/components/NotificationBell.vue";
 import ToastContainer from "@/components/ToastContainer.vue";
 
 const { user, logout } = useAuth();
+const router = useRouter();
+
+const moduleMenuItems = computed(() =>
+    router.getRoutes()
+        .filter(r => r.meta?.menu)
+        .sort((a, b) => (a.meta.order ?? 99) - (b.meta.order ?? 99))
+);
 const { connectWebSocket, disconnect, loadUnreadCount } = useNotifications();
 
 const isDark = ref(false);

@@ -85,6 +85,12 @@ const routes = [
     },
 ];
 
+// Auto-discover Vigilo module routes from src/modules/*/routes.js
+const moduleFiles = import.meta.glob('../modules/*/routes.js', { eager: true })
+const moduleRoutes = Object.values(moduleFiles).flatMap(m => m.default || [])
+const appRoute = routes.find(r => r.children)
+if (appRoute) appRoute.children.push(...moduleRoutes)
+
 const router = createRouter({
     history: createWebHistory(),
     routes,

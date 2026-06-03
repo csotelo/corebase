@@ -26,17 +26,15 @@
 import { ref, computed, onMounted, defineAsyncComponent } from "vue";
 import { dashboardApi } from "@/api/dashboard.js";
 
-const WIDGET_COMPONENTS = {
-    RateLimitGauge: defineAsyncComponent(() =>
-        import("@/components/widgets/RateLimitGauge.vue")
-    ),
-    UsageHistory: defineAsyncComponent(() =>
-        import("@/components/widgets/UsageHistory.vue")
-    ),
-    ServiceHealth: defineAsyncComponent(() =>
-        import("@/components/widgets/ServiceHealth.vue")
-    ),
-};
+// Auto-discover widgets from CoreBase (components/widgets/) y módulos Vigilo (modules/*/widgets/)
+const _coreWidgets = import.meta.glob('../components/widgets/*.vue')
+const _moduleWidgets = import.meta.glob('../modules/*/widgets/*.vue')
+const WIDGET_COMPONENTS = Object.fromEntries(
+    Object.entries({ ..._coreWidgets, ..._moduleWidgets }).map(([path, loader]) => {
+        const name = path.split('/').pop().replace('.vue', '')
+        return [name, defineAsyncComponent(loader)]
+    })
+);
 
 const widgets = ref([]);
 const loading = ref(true);

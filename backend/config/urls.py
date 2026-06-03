@@ -1,5 +1,6 @@
 """URL Configuration."""
 
+from django.apps import apps as django_apps
 from django.contrib import admin
 from django.http import HttpResponse
 from django.urls import include, path
@@ -33,3 +34,8 @@ if "debug_toolbar" in INSTALLED_APPS:
     urlpatterns = [
         path("__debug__/", include(debug_toolbar.urls)),
     ] + urlpatterns
+
+for _app_config in django_apps.get_app_configs():
+    if getattr(_app_config, "vigilo_module", False):
+        _prefix = getattr(_app_config, "api_prefix", _app_config.label)
+        urlpatterns += [path(f"api/{_prefix}/", include(f"{_app_config.name}.urls"))]

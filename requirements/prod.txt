@@ -1,0 +1,5 @@
+-r base.txt
+
+# Production specific
+gunicorn[gevent]==23.0.0
+sentry-sdk==2.19.2

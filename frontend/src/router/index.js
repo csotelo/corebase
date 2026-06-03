@@ -115,19 +115,23 @@ async function checkAuth() {
 }
 
 router.beforeEach(async (to, from, next) => {
-    if (to.meta.requiresAuth || to.meta.requiresAdmin) {
+    const requiresAuth = to.matched.some(r => r.meta.requiresAuth)
+    const requiresAdmin = to.matched.some(r => r.meta.requiresAdmin)
+    const isGuest = to.matched.some(r => r.meta.guest)
+
+    if (requiresAuth || requiresAdmin) {
         const authenticated = await checkAuth();
         if (!authenticated) {
             router._authCheckPromise = null;
             return next({ name: "login" });
         }
-        if (to.meta.requiresAdmin) {
+        if (requiresAdmin) {
             const authStore = useAuthStore();
             if (!authStore.user?.is_superuser) {
                 return next({ name: "dashboard" });
             }
         }
-    } else if (to.meta.guest) {
+    } else if (isGuest) {
         const authStore = useAuthStore();
         if (authStore.user) {
             return next({ name: "dashboard" });

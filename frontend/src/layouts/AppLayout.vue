@@ -43,7 +43,7 @@
                     <router-link
                         v-for="item in moduleMenuItems"
                         :key="item.name"
-                        :to="`/${item.path}`"
+                        :to="item.path"
                         class="flex items-center px-4 py-2 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                         active-class="bg-indigo-50 text-indigo-700 dark:bg-indigo-900 dark:text-indigo-300"
                     >

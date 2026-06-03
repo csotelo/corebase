@@ -229,6 +229,19 @@ services:
           cpus: "0.25"
     restart: unless-stopped
 
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    networks:
+      - app_network
+    deploy:
+      resources:
+        limits:
+          memory: 64m
+          cpus: "0.1"
+
   vue:
     build:
       context: ./frontend

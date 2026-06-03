@@ -4,7 +4,7 @@
         <!-- Sidebar -->
         <aside class="sidebar w-64 bg-white dark:bg-gray-800 shadow-md flex flex-col flex-shrink-0">
             <div class="h-16 flex items-center px-6 border-b border-gray-200 dark:border-gray-700">
-                <span class="text-xl font-bold text-gray-900 dark:text-white">CoreBase</span>
+                <span class="text-xl font-bold text-gray-900 dark:text-white">{{ appName }}</span>
             </div>
 
             <nav class="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
@@ -127,6 +127,8 @@ import ToastContainer from "@/components/ToastContainer.vue";
 
 const { user, logout } = useAuth();
 const router = useRouter();
+
+const appName = import.meta.env.VITE_APP_NAME || 'CoreBase';
 
 const moduleMenuItems = computed(() =>
     router.getRoutes()

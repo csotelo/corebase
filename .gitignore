@@ -33,6 +33,9 @@ env/
 .env
 !.env.example
 
+# ── Django local settings (project-specific overrides, never committed) ────────
+backend/config/settings/local.py
+
 # ── Node / Vue ─────────────────────────────────────────────────────────────────
 node_modules/
 dist/

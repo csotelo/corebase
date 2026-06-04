@@ -11,13 +11,13 @@ RUN apt-get update && apt-get install -y \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-COPY base.txt ./
+COPY requirements.txt ./
 
 # ── Development ────────────────────────────────────────────────────────────────
 FROM base AS development
 
-COPY dev.txt ./
-RUN pip install --no-cache-dir -r dev.txt
+COPY requirements-dev.txt ./
+RUN pip install --no-cache-dir -r requirements-dev.txt
 
 COPY . .
 
@@ -30,7 +30,7 @@ CMD ["uvicorn", "config.asgi:application", "--host", "0.0.0.0", "--port", "8000"
 # ── Production ─────────────────────────────────────────────────────────────────
 FROM base AS production
 
-RUN pip install --no-cache-dir -r base.txt gunicorn
+RUN pip install --no-cache-dir -r requirements.txt gunicorn
 
 COPY . .
 

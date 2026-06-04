@@ -26,6 +26,10 @@ redis==5.2.1
 django-redis==5.4.0
 
 
+# Storage — S3 compatible (MinIO en dev, AWS S3 en prod)
+django-storages[s3]==1.14.4
+boto3==1.35.99
+
 # Utils
 python-dotenv==1.0.1
 gunicorn==23.0.0

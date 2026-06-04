@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "django_celery_beat",
     "channels",
+    "storages",
     "core.apps.CoreConfig",
     "apps.users.apps.UsersConfig",
     "apps.tenants.apps.TenantsConfig",
@@ -93,6 +94,31 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
+# ── Object Storage (MinIO en dev / AWS S3 en prod) ────────────────────────────
+# En desarrollo: docker-compose levanta MinIO en localhost:9000
+# En producción: eliminar AWS_S3_ENDPOINT_URL y apuntar a AWS S3 real
+_AWS_ENDPOINT = os.environ.get("AWS_S3_ENDPOINT_URL")
+
+if os.environ.get("AWS_ACCESS_KEY_ID"):
+    DEFAULT_FILE_STORAGE  = "storages.backends.s3boto3.S3Boto3Storage"
+    STATICFILES_STORAGE   = "storages.backends.s3boto3.S3StaticStorage"
+
+    AWS_ACCESS_KEY_ID       = os.environ["AWS_ACCESS_KEY_ID"]
+    AWS_SECRET_ACCESS_KEY   = os.environ["AWS_SECRET_ACCESS_KEY"]
+    AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_STORAGE_BUCKET_NAME", "corebase")
+    AWS_S3_REGION_NAME      = os.environ.get("AWS_S3_REGION_NAME", "us-east-1")
+    AWS_DEFAULT_ACL         = None
+    AWS_S3_FILE_OVERWRITE   = False
+    AWS_QUERYSTRING_AUTH    = False   # URLs públicas sin firma (ajustar en prod si privadas)
+
+    if _AWS_ENDPOINT:
+        # MinIO o cualquier S3-compatible local
+        AWS_S3_ENDPOINT_URL          = _AWS_ENDPOINT
+        AWS_S3_ADDRESSING_STYLE      = "path"   # MinIO requiere path style
+        AWS_S3_USE_SSL               = _AWS_ENDPOINT.startswith("https")
+
+    MEDIA_URL = f"{_AWS_ENDPOINT or 'https://s3.amazonaws.com'}/{AWS_STORAGE_BUCKET_NAME}/media/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
